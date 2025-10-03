@@ -3,21 +3,22 @@
 A interactive web application built with React that visualizes various sorting algorithms in real-time. Watch how different sorting algorithms work by seeing them sort arrays step-by-step with visual animations.
 ---
 
-## 🚀 Features
+🚀 Features
 
-- 🔄 Visual representation of array elements (bars)  
-- 🎞️ Animations showing comparisons, swaps, and movements
-- 🧮 Choose from multiple sorting algorithms
-   Bubble Sort, Selection Sort, Insertion Sort, Merge Sort, Quick Sort, Heap Sort  
-- ⏱️ Adjustable speed / delay between steps   
+🔄 Visual Array Representation - Dynamic bar chart showing array elements in real-time
+🎞️ Smooth Animations - Beautiful animations displaying comparisons, swaps, and movements
+🧮 Multiple Sorting Algorithms
 
----
+🫧 Bubble Sort
+🎯 Selection Sort
+➕ Insertion Sort
+🔀 Merge Sort
+⚡ Quick Sort
+🌳 Heap Sort
 
-## 🛠️ Tech Stack
 
-- 🌐 HTML / CSS / JavaScript  
-- ⚡ (Optional: add framework/library you used, e.g. React, Vue, plain JS)  
-- 📦 Build tools (if any)  
+⏱️ Adjustable Speed Control - Customize animation delay to watch algorithms at your own pace
+📏 Array Size Control - Generate arrays of different sizes to test algorithm performance
 
 📸 Screenshots
 | Before Sorting 🟦 | During Sorting 🟨 | After Sorting 🟩 |
