@@ -22,9 +22,7 @@ A interactive web application built with React that visualizes various sorting a
 📸 Screenshots
 | Before Sorting 🟦 | During Sorting 🟨 | After Sorting 🟩 |
 | ----------------- | ----------------- | ---------------- |
-|  <img width="1919" height="963" alt="Screenshot 2025-09-28 160330" src="https://github.com/user-attachments/assets/8008dab7-4847-4131-9195-934b1a9fa0c4" />
- | <img width="2252" height="1362" alt="Screenshot 2025-10-03 141748" src="https://github.com/user-attachments/assets/eeea760a-5cb5-4a15-b1ef-991537e094da" />
-  | <img width="1918" height="964" alt="Screenshot 2025-09-28 160313" src="https://github.com/user-attachments/assets/071761bc-a918-41aa-ae48-3d7d15eeb0dd" />  |
+|  <img width="1919" height="963" alt="Screenshot 2025-09-28 160330" src="https://github.com/user-attachments/assets/8008dab7-4847-4131-9195-934b1a9fa0c4" /> | <img width="2252" height="1362" alt="Screenshot 2025-10-03 141748" src="https://github.com/user-attachments/assets/eeea760a-5cb5-4a15-b1ef-991537e094da" /> | <img width="1918" height="964" alt="Screenshot 2025-09-28 160313" src="https://github.com/user-attachments/assets/071761bc-a918-41aa-ae48-3d7d15eeb0dd" />  |
 
 
 
