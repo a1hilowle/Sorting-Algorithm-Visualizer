@@ -1,136 +1,89 @@
-import { createContext, useEffect, useState } from "react";
-import { getInsertionSortAnims } from "./insertionSort";
-import { getMergeSortAnims } from "./mergeSort";
+import { createContext, useEffect, useRef, useState, type ReactNode, type Dispatch, type SetStateAction } from "react";
+import { applyStep, generateSteps, type Step } from "../../sorting";
 
-export type Algo =
-  | "merge sort"
-  | "insertion sort"
-  | "quick sort"
-  | "bubble sort"
-  | "heap sort";
-
-interface Settings {
-  algoType: Algo;
-  arrayLen: number;
-  delay: number;
-}
-
-const initVals: Settings = {
-  algoType: "merge sort",
-  arrayLen: 25,
-  delay: 15,
-};
+export type Algo = "merge sort" | "insertion sort" | "quick sort" | "bubble sort" | "heap sort";
+type Settings = { algoType: Algo; arrayLen: number; delay: number };
+const initialSettings: Settings = { algoType: "merge sort", arrayLen: 25, delay: 15 };
+const randomArray = (length: number) => Array.from({ length }, () => Math.floor(Math.random() * 480) + 60);
+const labels = {
+  "merge sort": "Merge Sort",
+  "insertion sort": "Insertion Sort",
+  "quick sort": "Quick Sort",
+  "bubble sort": "Bubble Sort",
+  "heap sort": "Heap Sort",
+} as const;
 
 type SettingsContext = {
   settings: Settings;
-  setSettings?: React.Dispatch<React.SetStateAction<Settings>>;
-  sort: (algoType: Algo) => void;
+  setSettings: Dispatch<SetStateAction<Settings>>;
+  sort: (algorithm: Algo) => void;
+  newArray: () => void;
+  isSorting: boolean;
 };
+type Items = { items: number[]; activeIndices: number[] };
 
 export const Context = createContext<SettingsContext>({
-  settings: initVals,
-  sort: (algoType) => {},
+  settings: initialSettings,
+  setSettings: () => undefined,
+  sort: () => undefined,
+  newArray: () => undefined,
+  isSorting: false,
 });
+export const ItemsContext = createContext<Items>({ items: [], activeIndices: [] });
 
-type Items = {
-  items: number[];
-  setItems?: React.Dispatch<React.SetStateAction<number[]>>;
-};
-export const ItemsContext = createContext<Items>({ items: [] });
+export default function AlgoContext({ children }: { children: ReactNode }) {
+  const [settings, setSettings] = useState(initialSettings);
+  const [items, setItems] = useState(() => randomArray(initialSettings.arrayLen));
+  const [activeIndices, setActiveIndices] = useState<number[]>([]);
+  const [isSorting, setIsSorting] = useState(false);
+  const timer = useRef<number | undefined>(undefined);
+  const delay = useRef(settings.delay);
+  const generation = useRef(0);
+  delay.current = settings.delay;
 
-interface Props {
-  children: React.ReactNode;
-}
+  const stop = () => {
+    generation.current++;
+    window.clearTimeout(timer.current);
+    setIsSorting(false);
+    setActiveIndices([]);
+  };
 
-const AlgoContext: React.FC<Props> = ({ children }) => {
-  const [settings, setSettings] = useState<Settings>(initVals);
-  const [items, setItems] = useState<number[]>([]);
+  const newArray = () => {
+    stop();
+    setItems(randomArray(settings.arrayLen));
+  };
 
   useEffect(() => {
-    const ranNums = [];
-    for (let i = 0; i < settings.arrayLen; i++) {
-      ranNums.push(Math.floor(Math.random() * 540));
-    }
-    setItems(ranNums);
+    stop();
+    setItems(randomArray(settings.arrayLen));
+    return () => window.clearTimeout(timer.current);
   }, [settings.arrayLen]);
 
-  const sort = (algoType: Algo) => {
-    switch (algoType) {
-      case "merge sort":
-        const aux: number[] = [];
-        const arr: number[][] = [];
-        const nums = [...items];
-        getMergeSortAnims(nums, aux, arr, 0, items.length - 1);
-        animateMerge(nums, arr);
-        break;
-      case "insertion sort":
-        const [newArr, animArr] = getInsertionSortAnims(items);
-        animateDivs(newArr, animArr);
-        break;
-      case "quick sort":
-        break;
-      case "bubble sort":
-        break;
-      case "heap sort":
-        break;
-      default:
-        break;
-    }
+  const sort = (algorithm: Algo) => {
+    if (isSorting) return;
+    const steps = generateSteps(items, labels[algorithm]);
+    if (steps.length === 0) return;
+    const run = ++generation.current;
+    let values = [...items];
+    let index = 0;
+    setIsSorting(true);
+    const next = () => {
+      if (run !== generation.current) return;
+      if (index >= steps.length) {
+        setIsSorting(false);
+        setActiveIndices([]);
+        return;
+      }
+      const step: Step = steps[index++];
+      values = applyStep(values, step);
+      setItems(values);
+      setActiveIndices(step.type === "write" ? [step.index] : step.indices);
+      timer.current = window.setTimeout(next, delay.current);
+    };
+    next();
   };
 
-  const animateMerge = (newArr: number[], arr: number[][]) => {
-    arr.forEach(([newHeight, index], idx) => {
-      const div = document.getElementById(`${index}`);
-      if (!div) return;
-      setTimeout(
-        () => {
-          div.style.backgroundColor = "#b041f0";
-          div.style.height = `${newHeight / 7}%`;
-          setTimeout(() => {
-            div.style.backgroundColor = "#482";
-            if (idx === arr.length - 1) {
-              setItems(newArr);
-            }
-          }, settings.delay * 2);
-        },
-        settings.delay * idx * 2
-      );
-    });
-  };
-
-  const animateDivs = (newArr: number[], arr: number[][]) => {
-    arr.forEach(([first, second], idx) => {
-      const div = document.getElementById(`${first}`);
-      const div2 = document.getElementById(`${second}`);
-      if (!div || !div2) return;
-      setTimeout(
-        () => {
-          div.style.backgroundColor = "#b041f0";
-          div2.style.backgroundColor = "#b041f0";
-          const divHeight = div.style.height;
-          div.style.height = div2.style.height;
-          div2.style.height = divHeight;
-          setTimeout(() => {
-            div.style.backgroundColor = "#482";
-            div2.style.backgroundColor = "#482";
-            if (idx === arr.length - 1) {
-              setItems(newArr);
-            }
-          }, settings.delay * 2);
-        },
-        settings.delay * idx * 2
-      );
-    });
-  };
-
-  return (
-    <ItemsContext.Provider value={{ items, setItems }}>
-      <Context.Provider value={{ sort, settings, setSettings }}>
-        {children}
-      </Context.Provider>
-    </ItemsContext.Provider>
-  );
-};
-
-// At the very end of AlgoContext.tsx
-export default AlgoContext;
+  return <ItemsContext.Provider value={{ items, activeIndices }}>
+    <Context.Provider value={{ settings, setSettings, sort, newArray, isSorting }}>{children}</Context.Provider>
+  </ItemsContext.Provider>;
+}

@@ -2,21 +2,17 @@ import { useContext } from "react";
 import { Algo, Context } from "./utils/AlgoContext";
 
 const Nav = () => {
-  const { sort, settings, setSettings } = useContext(Context);
+  const { sort, settings, setSettings, newArray, isSorting } = useContext(Context);
 
   const onArrayChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
-    if (!setSettings) return;
     setSettings((c) => ({ ...c, arrayLen: +e.target.value * 5 }));
   };
   const onDelayChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
-    if (!setSettings) return;
     setSettings((c) => ({ ...c, delay: +e.target.value }));
   };
 
   const onAlgoChange = (type: Algo) => {
-    if (!setSettings) return;
     setSettings((c) => ({ ...c, algoType: type }));
-    console.log("Selected algorithm:", type); // Log the new value directly
   };
 
   return (
@@ -25,6 +21,7 @@ const Nav = () => {
         <button
           className={`border border-teal-100 shadow-md py-2 px-4 transition-all active:scale-95 ${settings.algoType === "merge sort" && "text-purple-700"}`}
           onClick={() => onAlgoChange("merge sort")}
+          disabled={isSorting}
         >
           Merge Sort
         </button>
@@ -32,6 +29,7 @@ const Nav = () => {
         <button
           className={`border border-teal-100 shadow-md py-2 px-4 transition-all active:scale-95 ${settings.algoType === "insertion sort" && "text-purple-700"}`}
           onClick={() => onAlgoChange("insertion sort")}
+          disabled={isSorting}
         >
           Insertion Sort
         </button>
@@ -39,6 +37,7 @@ const Nav = () => {
         <button
           className={`border border-teal-100 shadow-md py-2 px-4 transition-all active:scale-95 ${settings.algoType === "quick sort" && "text-purple-700"}`}
           onClick={() => onAlgoChange("quick sort")}
+          disabled={isSorting}
         >
           Quick Sort
         </button>
@@ -46,6 +45,7 @@ const Nav = () => {
         <button
           className={`border border-teal-100 shadow-md py-2 px-4 transition-all active:scale-95 ${settings.algoType === "bubble sort" && "text-purple-700"}`}
           onClick={() => onAlgoChange("bubble sort")}
+          disabled={isSorting}
         >
           Bubble Sort
         </button>
@@ -53,6 +53,7 @@ const Nav = () => {
         <button
           className={`border border-teal-100 shadow-md py-2 px-4 transition-all active:scale-95 ${settings.algoType === "heap sort" && "text-purple-700"}`}
           onClick={() => onAlgoChange("heap sort")}
+          disabled={isSorting}
         >
           Heap Sort
         </button>
@@ -60,8 +61,12 @@ const Nav = () => {
         <button
           className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
           onClick={() => sort(settings.algoType)}
+          disabled={isSorting}
         >
-          Sort
+          {isSorting ? "Sorting..." : "Sort"}
+        </button>
+        <button className="px-4 py-2 bg-gray-700 text-white rounded hover:bg-gray-800" onClick={newArray}>
+          New Array
         </button>
       </div>
 
@@ -72,8 +77,9 @@ const Nav = () => {
           name="items_amount"
           id="items_amount"
           className="w-full max-w-2xl"
-          defaultValue={25}
-          min={1}
+          value={settings.arrayLen / 5}
+          min={2}
+          max={20}
           onChange={onArrayChange}
         />
         <label htmlFor="delay">Delay: {settings.delay}</label>
@@ -83,7 +89,8 @@ const Nav = () => {
           id="delay"
           className="w-full max-w-2xl"
           min={1}
-          defaultValue={15}
+          value={settings.delay}
+          max={100}
           onChange={onDelayChange}
         />
       </div>
